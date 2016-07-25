@@ -1,3 +1,23 @@
+# pgjdbc-ng-osgi
+
+Branch pgjdbc-ng-osgi is a fork of the verion 0.6 release with the osgi changes back ported from 0.7 snapshot so that this version loads correctly in karaf
+
+See pgjdbc-ng issue 250 https://github.com/impossibl/pgjdbc-ng/issues/250 
+
+The latest 0.6 release of this driver has OSGi metadata using the very old styleManifest-Version = 1.0 
+which doesn not import  javax and org.xml dependencies correctly. The patch for this issue allows
+this bundle to install nicely in OSGi containers such as Apache Karaf
+
+The patch for this issue in version 0.7-SNAPSHOT is 
+https://github.com/impossibl/pgjdbc-ng/commit/e8e188d98bb1a3cbccfb3d1515b5547f2317c220  committed on Mar 16
+
+When 0.7 is released by the pgjdbc-ng project we will be able to use it directly.
+
+to use this branch build and reference the jar
+ <groupId>com.impossibl.pgjdbc-ng</groupId>
+ <artifactId>pgjdbc-ng</artifactId>
+ <version>0.6.osgi</version>
+
 # pgjdbc-ng
 
 A new JDBC driver for PostgreSQL aimed at supporting the advanced features of JDBC and Postgres

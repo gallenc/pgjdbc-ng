@@ -28,17 +28,17 @@
   POSSIBILITY OF SUCH DAMAGE.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.impossibl.pgjdbc-ng</groupId>
-
   <artifactId>pgjdbc-ng</artifactId>
+  <version>0.6.osgi</version>
 
-  <version>0.6</version>
-
-  <packaging>jar</packaging>
+  <!-- to generate OSGi bundle (just a JAR) -->
+  <packaging>bundle</packaging>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -50,8 +50,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Checkstyle configuration -->
     <linkXRef>false</linkXRef>
-    <project.osgi.exports>com.impossibl.postgres.jdbc,com.impossibl.postgres.jdbc.xa,com.impossibl.postgres.api.data,com.impossibl.postgres.api.jdbc</project.osgi.exports>
-    <project.osgi.imports>io.netty.buffer,io.netty.channel,io.netty.channel.nio,io.netty.channel.socket,io.netty.channel.socket.nio,io.netty.bootstrap,io.netty.util,io.netty.util.concurrent,io.netty.handler.codec,io.netty.handler.ssl</project.osgi.imports>
   </properties>
 
   <prerequisites>
@@ -124,16 +122,6 @@
 	      <minimizeJar>true</minimizeJar>
 	      <shadedArtifactAttached>true</shadedArtifactAttached>
 	      <shadedClassifierName>complete</shadedClassifierName>
-	      <transformers>
-		<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-		  <manifestEntries>
-		    <Bundle-SymbolicName>com.impossibl.postgres</Bundle-SymbolicName>
-		    <Bundle-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</Bundle-Version>
-		    <Export-Package>${project.osgi.exports}</Export-Package>
-		    <Import-Package>${project.osgi.imports}</Import-Package>
-		  </manifestEntries>
-		</transformer>
-	      </transformers>
 	    </configuration>
 	  </execution>
 	</executions>
@@ -155,34 +143,23 @@
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
+      <!-- to generate the OSGi bundle -->
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-jar-plugin</artifactId>
-	<version>2.5</version>
-	<executions>
-	  <execution>
-	    <goals>
-	      <goal>jar</goal>
-	    </goals>
-	    <configuration>
-	      <archive>
-		<manifestEntries>
-		  <Bundle-SymbolicName>com.impossibl.postgres</Bundle-SymbolicName>
-		  <Bundle-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</Bundle-Version>
-		  <Export-Package>${project.osgi.exports}</Export-Package>
-		  <Import-Package>${project.osgi.imports}</Import-Package>
-		</manifestEntries>
-	      </archive>
-	      <forceCreation>true</forceCreation>
-	    </configuration>
-	  </execution>
-	  <execution>
-	    <id>test-manifest.mf</id>
-	    <goals>
-	      <goal>test-jar</goal>
-	    </goals>
-	  </execution>
-	</executions>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>3.0.1</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <!-- do not import ourself -->
+            <Import-Package>
+              !com.impossibl.postgres*,
+              io.netty.*;version="[4.0,4.1)",
+              *
+            </Import-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
     <pluginManagement>
@@ -233,7 +210,8 @@
   
   <name>PGJDBC-NG</name>
   <url>http://impossibl.github.io/pgjdbc-ng/</url>
-  <description>A new JDBC driver for PostgreSQL aimed at supporting the advanced features of JDBC and Postgres. </description>
+  <description>A new JDBC driver for PostgreSQL aimed at supporting the advanced features of JDBC and Postgres.
+  </description>
   <inceptionYear>2013</inceptionYear>
   <organization>
     <name>impossibl.com</name>
